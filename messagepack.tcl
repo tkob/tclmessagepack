@@ -12,8 +12,7 @@ namespace eval messagepack {
         set store $obj
     }
 
-    proc msgpack_producer {read eofvar out} {
-        upvar $eofvar done
+    proc unpack_and_callback {read out {eofvar ""}} {
         while {[set byte [{*}$read 1]] != ""} {
             binary scan $byte {c} byte
             if {$byte == 192} {
@@ -196,6 +195,9 @@ namespace eval messagepack {
                 error "unknown byte: $byte"
             }
         }
-        set done true
+        if {$eofvar != ""} {
+            upvar $eofvar done
+            set done true
+        }
     }
 }
