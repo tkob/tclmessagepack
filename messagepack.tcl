@@ -123,11 +123,13 @@ namespace eval messagepack {
                 set len [expr {$byte & 0x0f}]
                 set array [list %lst]
                 for {set i 0} {$i < $len} {incr i} {
-                    set storename [gensym store]
-                    variable $storename
-                    msgpack_prodcer $read $eofvar [list msgpack_store $storename]
-                    lappend array [set $storename]
-                    unset $storename
+                    set nsname [gensym ns]
+                    namespace eval $nsname {
+                        variable store [list]
+                    }
+                    unpack_and_callback $read [list set ${nsname}::store] $eofvar
+                    lappend array [set ${nsname}::store]
+                    namespace delete $nsname
                 }
                 {*}$out $array
             } elseif {$byte == -36} {
@@ -137,11 +139,13 @@ namespace eval messagepack {
                 set len [expr {$len & 0xffff}]
                 set array [list %lst]
                 for {set i 0} {$i < $len} {incr i} {
-                    set storename [gensym store]
-                    variable $storename
-                    msgpack_prodcer $read $eofvar [list msgpack_store $storename]
-                    lappend array [set $storename]
-                    unset $storename
+                    set nsname [gensym ns]
+                    namespace eval $nsname {
+                        variable store [list]
+                    }
+                    unpack_and_callback $read [list set ${nsname}::store] $eofvar
+                    lappend array [set ${nsname}::store]
+                    namespace delete $nsname
                 }
                 {*}$out $array
             } elseif {$byte == -35} {
@@ -151,11 +155,13 @@ namespace eval messagepack {
                 set len [expr {$len & 0xffffffff}]
                 set array [list %lst]
                 for {set i 0} {$i < $len} {incr i} {
-                    set storename [gensym store]
-                    variable $storename
-                    msgpack_prodcer $read $eofvar [list msgpack_store $storename]
-                    lappend array [set $storename]
-                    unset $storename
+                    set nsname [gensym ns]
+                    namespace eval $nsname {
+                        variable store [list]
+                    }
+                    unpack_and_callback $read [list set ${nsname}::store] $eofvar
+                    lappend array [set ${nsname}::store]
+                    namespace delete $nsname
                 }
                 {*}$out $array
             } elseif {$byte >= -128 && $byte <= -113} {
