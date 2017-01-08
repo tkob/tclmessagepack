@@ -7,11 +7,6 @@ namespace eval messagepack {
         return "$prefix[incr id]"
     }
     
-    proc msgpack_store {storename obj} {
-        variable $storename
-        set store $obj
-    }
-
     proc unpack_and_callback {read out {eofvar ""}} {
         while {[set byte [{*}$read 1]] != ""} {
             binary scan $byte {c} byte
