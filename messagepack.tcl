@@ -1,3 +1,5 @@
+package provide messagepack 0.1.0
+
 namespace eval messagepack {
     variable id 0
     proc gensym {prefix} {
