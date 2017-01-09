@@ -11,13 +11,13 @@ namespace eval messagepack {
         if {$count == 0} return
         while {[set byte [{*}$read 1]] != ""} {
             binary scan $byte {c} byte
-            if {$byte == 192} {
+            if {$byte == -64} {
                 # 0xc0: nil
                 {*}$out ""
-            } elseif {$byte == 194} {
+            } elseif {$byte == -62} {
                 # 0xc2: false
                 {*}$out false
-            } elseif {$byte == 195} {
+            } elseif {$byte == -61} {
                 # 0xc3: true
                 {*}$out true
             } elseif {$byte >= 0 && $byte <= 127 ||
