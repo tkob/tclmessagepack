@@ -13,7 +13,7 @@ namespace eval messagepack {
             binary scan $byte {c} byte
             if {$byte == -64} {
                 # 0xc0: nil
-                {*}$out ""
+                {*}$out %nil
             } elseif {$byte == -62} {
                 # 0xc2: false
                 {*}$out false
