@@ -70,8 +70,8 @@ namespace eval messagepack {
                 binary scan $bytes {R} num
                 {*}$out $num
             } elseif {$byte == -53} {
-                # 0xcb: float 32
-                set bytes [{*}$read 4]
+                # 0xcb: float 64
+                set bytes [{*}$read 8]
                 binary scan $bytes {Q} num
                 {*}$out $num
             } elseif {$byte >= -96 && $byte <= -65} {
