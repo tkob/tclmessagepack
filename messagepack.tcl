@@ -7,7 +7,8 @@ namespace eval messagepack {
         return "$prefix[incr id]"
     }
     
-    proc unpack_and_callback {read out {eofvar ""}} {
+    proc unpack_and_callback {read out {eofvar ""} {count -1}} {
+        if {$count == 0} return
         while {[set byte [{*}$read 1]] != ""} {
             binary scan $byte {c} byte
             if {$byte == 192} {
@@ -116,49 +117,40 @@ namespace eval messagepack {
             } elseif {$byte >= -112 && $byte <= -97} {
                 # 1001XXXX: fixarray
                 set len [expr {$byte & 0x0f}]
-                set array [list %lst]
-                for {set i 0} {$i < $len} {incr i} {
-                    set nsname [gensym ns]
-                    namespace eval $nsname {
-                        variable store [list]
-                    }
-                    unpack_and_callback $read [list set ${nsname}::store] $eofvar
-                    lappend array [set ${nsname}::store]
-                    namespace delete $nsname
+
+                set nsname [gensym ns]
+                namespace eval $nsname {
+                    variable array [list %lst]
                 }
-                {*}$out $array
+                unpack_and_callback $read [list lappend ${nsname}::array] $eofvar $len
+                {*}$out [set ${nsname}::array]
+                namespace delete $nsname
             } elseif {$byte == -36} {
                 # 0xdc: array 16
                 set len [{*}$read 2]
                 binary scan {S} len
                 set len [expr {$len & 0xffff}]
-                set array [list %lst]
-                for {set i 0} {$i < $len} {incr i} {
-                    set nsname [gensym ns]
-                    namespace eval $nsname {
-                        variable store [list]
-                    }
-                    unpack_and_callback $read [list set ${nsname}::store] $eofvar
-                    lappend array [set ${nsname}::store]
-                    namespace delete $nsname
+
+                set nsname [gensym ns]
+                namespace eval $nsname {
+                    variable array [list %lst]
                 }
-                {*}$out $array
+                unpack_and_callback $read [list lappend ${nsname}::array] $eofvar $len
+                {*}$out [set ${nsname}::array]
+                namespace delete $nsname
             } elseif {$byte == -35} {
                 # 0xdd: array 32
                 set len [{*}$read 4]
                 binary scan {I} len
                 set len [expr {$len & 0xffffffff}]
-                set array [list %lst]
-                for {set i 0} {$i < $len} {incr i} {
-                    set nsname [gensym ns]
-                    namespace eval $nsname {
-                        variable store [list]
-                    }
-                    unpack_and_callback $read [list set ${nsname}::store] $eofvar
-                    lappend array [set ${nsname}::store]
-                    namespace delete $nsname
+
+                set nsname [gensym ns]
+                namespace eval $nsname {
+                    variable array [list %lst]
                 }
-                {*}$out $array
+                unpack_and_callback $read [list lappend ${nsname}::array] $eofvar $len
+                {*}$out [set ${nsname}::array]
+                namespace delete $nsname
             } elseif {$byte >= -128 && $byte <= -113} {
                 # fixmap
                 error {fixmap unimplemented}
@@ -195,6 +187,8 @@ namespace eval messagepack {
             } else {
                 error "unknown byte: $byte"
             }
+            incr count -1
+            if {$count == 0} return
         }
         if {$eofvar != ""} {
             upvar $eofvar done
