@@ -195,4 +195,28 @@ namespace eval messagepack {
             set done true
         }
     }
+
+    proc read_string {source nsname num} {
+        namespace upvar $nsname cursor cursor
+        set data [string range $source $cursor [expr {$cursor + $num - 1}]]
+        set len [string length $data]
+        set cursor [expr {$cursor + $len}]
+        return $data
+    }
+
+    proc unpack_string {data} {
+        set nsname [gensym ns]
+        namespace eval $nsname {
+            variable cursor 0
+            variable sink [list]
+        }
+
+        unpack_and_callback [list read_string $data $nsname] [list lappend ${nsname}::sink]
+
+        set result [set ${nsname}::sink]
+        namespace delete $nsname
+        return $result
+    }
+
+    namespace export unpack_and_callback unpack_string
 }
