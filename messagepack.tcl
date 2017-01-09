@@ -81,37 +81,37 @@ namespace eval messagepack {
             } elseif {$byte == -39} {
                 # 0xd9: str 8
                 set len [{*}$read 1]
-                binary scan {c} len
+                binary scan $len {c} len
                 set len [expr {$len & 0xff}]
                 {*}$out [list %str [{*}$read $len]]
             } elseif {$byte == -38} {
                 # 0xda: str 16
                 set len [{*}$read 2]
-                binary scan {S} len
+                binary scan $len {S} len
                 set len [expr {$len & 0xffff}]
                 {*}$out [list %str [{*}$read $len]]
             } elseif {$byte == -37} {
                 # 0xdb: str 32
                 set len [{*}$read 4]
-                binary scan {I} len
+                binary scan $len {I} len
                 set len [expr {$len & 0xffffffff}]
                 {*}$out [list %str [{*}$read $len]]
             } elseif {$byte == -60} {
                 # 0xc4: bin 8
                 set len [{*}$read 1]
-                binary scan {c} len
+                binary scan $len {c} len
                 set len [expr {$len & 0xff}]
                 {*}$out [list %bin [{*}$read $len]]
             } elseif {$byte == -59} {
                 # 0xc5: bin 16
                 set len [{*}$read 2]
-                binary scan {S} len
+                binary scan $len {S} len
                 set len [expr {$len & 0xffff}]
                 {*}$out [list %bin [{*}$read $len]]
             } elseif {$byte == -58} {
                 # 0xc6: bin 32
                 set len [{*}$read 4]
-                binary scan {I} len
+                binary scan $len {I} len
                 set len [expr {$len & 0xffffffff}]
                 {*}$out [list %bin [{*}$read $len]]
             } elseif {$byte >= -112 && $byte <= -97} {
@@ -128,7 +128,7 @@ namespace eval messagepack {
             } elseif {$byte == -36} {
                 # 0xdc: array 16
                 set len [{*}$read 2]
-                binary scan {S} len
+                binary scan $len {S} len
                 set len [expr {$len & 0xffff}]
 
                 set nsname [gensym ns]
@@ -141,7 +141,7 @@ namespace eval messagepack {
             } elseif {$byte == -35} {
                 # 0xdd: array 32
                 set len [{*}$read 4]
-                binary scan {I} len
+                binary scan $len {I} len
                 set len [expr {$len & 0xffffffff}]
 
                 set nsname [gensym ns]
