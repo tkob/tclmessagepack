@@ -50,6 +50,12 @@ test {} {} {unpack_string "\xca\x80\x80\x00\x00"} [expr {-pow(2, -126.0)}]
 test {unpack max subnormal 32} {} {unpack_string "\xca\x00\x7f\xff\xff"} [expr {0xffffff * pow(2, (-126.0 - 23.0)) - pow(2, -126)}]
 test {} {} {unpack_string "\xca\x80\x7f\xff\xff"} [expr {-(0xffffff * pow(2, (-126.0 - 23.0)) - pow(2, -126))}]
 
+test {unpack empty string} {} {unpack_string "\xa0"} [list {%str {}}]
+test {unpack 31-bytes string} {} {unpack_string "\xbf\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a_"} [list [list %str {羊羊羊羊羊羊羊羊羊羊_}]]
+test {unpack 32-bytes string} {} {unpack_string "\xd9\x20_\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a\xe7\xbe\x8a_"} [list [list %str {_羊羊羊羊羊羊羊羊羊羊_}]]
+test {unpack 65535-bytes string} {} {unpack_string "\xda\xff\xff[string repeat "\xe7\xbe\x8a" 21845]"} [list [list %str [string repeat {羊} 21845]]]
+test {unpack 65536-bytes string} {} {unpack_string "\xdb\x00\x01\x00\x00_[string repeat "\xe7\xbe\x8a" 21845]"} [list [list %str "_[string repeat {羊} 21845]"]]
+
 test {unpack empty array} {} {unpack_string "\x90"} [list [list {%lst}]]
 test {unpack 1-element array} {} {unpack_string "\x91\x00"} [list {%lst 0}]
 test {unpack 15-elements array} {} {unpack_string "\x9f\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f"} [list [list %lst 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15]]
