@@ -77,25 +77,25 @@ namespace eval messagepack {
             } elseif {$byte >= -96 && $byte <= -65} {
                 # 101XXXXX: fixstr
                 set len [expr {$byte & 0x1f}]
-                {*}$out [list %str [{*}$read $len]]
+                {*}$out [list %str [encoding convertfrom utf-8 [{*}$read $len]]]
             } elseif {$byte == -39} {
                 # 0xd9: str 8
                 set len [{*}$read 1]
                 binary scan $len {c} len
                 set len [expr {$len & 0xff}]
-                {*}$out [list %str [{*}$read $len]]
+                {*}$out [list %str [encoding convertfrom utf-8 [{*}$read $len]]]
             } elseif {$byte == -38} {
                 # 0xda: str 16
                 set len [{*}$read 2]
                 binary scan $len {S} len
                 set len [expr {$len & 0xffff}]
-                {*}$out [list %str [{*}$read $len]]
+                {*}$out [list %str [encoding convertfrom utf-8 [{*}$read $len]]]
             } elseif {$byte == -37} {
                 # 0xdb: str 32
                 set len [{*}$read 4]
                 binary scan $len {I} len
                 set len [expr {$len & 0xffffffff}]
-                {*}$out [list %str [{*}$read $len]]
+                {*}$out [list %str [encoding convertfrom utf-8 [{*}$read $len]]]
             } elseif {$byte == -60} {
                 # 0xc4: bin 8
                 set len [{*}$read 1]
