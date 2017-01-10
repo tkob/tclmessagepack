@@ -34,12 +34,12 @@ test {unpack min int 32} {} {unpack_string "\xd2\x80\x00\x00\x00"} -2147483648
 test {unpack int 64} {} {unpack_string "\xd3\xff\xff\xff\xff\x7f\xff\xff\xff"} -2147483649
 test {unpack min int 64} {} {unpack_string "\xd3\x80\x00\x00\x00\x00\x00\x00\x00"} -9223372036854775808
 
-test {unpack 0} {} {unpack_string "\xcb\x00\x00\x00\x00\x00\x00\x00\x00"} 0.0
-test {} {} {unpack_string "\xcb\x80\x00\x00\x00\x00\x00\x00\x00"} -0.0
-test {} {} {unpack_string "\xcb\x7f\xf8\x00\x00\x00\x00\x00\x00"} NaN
-test {} {} {unpack_string "\xcb\xff\xf8\x00\x00\x00\x00\x00\x00"} -NaN
-test {} {} {unpack_string "\xcb\x7f\xf0\x00\x00\x00\x00\x00\x00"} Inf
-test {} {} {unpack_string "\xcb\xff\xf0\x00\x00\x00\x00\x00\x00"} -Inf
+test {unpack 0.0 in float 64} {} {unpack_string "\xcb\x00\x00\x00\x00\x00\x00\x00\x00"} 0.0
+test {unpack -0.0 in float 64} {} {unpack_string "\xcb\x80\x00\x00\x00\x00\x00\x00\x00"} -0.0
+test {unpack NaN in float 64} {} {unpack_string "\xcb\x7f\xf8\x00\x00\x00\x00\x00\x00"} NaN
+test {unpack -NaN in float 64} {} {unpack_string "\xcb\xff\xf8\x00\x00\x00\x00\x00\x00"} -NaN
+test {unpack Inf in float 64} {} {unpack_string "\xcb\x7f\xf0\x00\x00\x00\x00\x00\x00"} Inf
+test {unpack -Inf in float 64} {} {unpack_string "\xcb\xff\xf0\x00\x00\x00\x00\x00\x00"} -Inf
 test {unpack pi} {} {unpack_string "\xcb\x40\x09\x21\xfb\x54\x44\x2d\x18"} [expr {atan(1) * 4}]
 test {unpack minus pi} {} {unpack_string "\xcb\xc0\x09\x21\xfb\x54\x44\x2d\x18"} [expr {atan(1) * 4 * -1}]
 test {} {} {unpack_string "\xcb\x7f\xef\xff\xff\xff\xff\xff\xff"} [expr {(2.0 - pow(2, -52)) * pow(2, 1023)}]
@@ -50,13 +50,12 @@ test {} {} {unpack_string "\xcb\x00\x10\x00\x00\x00\x00\x00\x00"} [expr {pow(2, 
 test {} {} {unpack_string "\xcb\x80\x10\x00\x00\x00\x00\x00\x00"} [expr {-pow(2, -1022)}]
 test {} {} {unpack_string "\xcb\x00\x0f\xff\xff\xff\xff\xff\xff"} [expr {0x1FFFFFFFFFFFFF * pow(2, -1022.0 - 52.0) - pow(2, -1022)}]
 
-test {} {} {unpack_string "\xca\x00\x00\x00\x00"} 0.0
-test {} {} {unpack_string "\xca\x80\x00\x00\x00"} -0.0
-test {} {} {unpack_string "\xca\x7f\xc0\x00\x00"} NaN
-test {} {} {unpack_string "\xca\xff\xc0\x00\x00"} -NaN
-test {} {} {unpack_string "\xca\xff\xc0\x00\x00"} -NaN
-test {} {} {unpack_string "\xca\x7f\x80\x00\x00"} Inf
-test {} {} {unpack_string "\xca\xff\x80\x00\x00"} -Inf
+test {unpack 0.0 in float 32} {} {unpack_string "\xca\x00\x00\x00\x00"} 0.0
+test {unpack -0.0 in float 32} {} {unpack_string "\xca\x80\x00\x00\x00"} -0.0
+test {unpack NaN in float 32} {} {unpack_string "\xca\x7f\xc0\x00\x00"} NaN
+test {unpack -NaN in float 32} {} {unpack_string "\xca\xff\xc0\x00\x00"} -NaN
+test {unpack Inf in float 32} {} {unpack_string "\xca\x7f\x80\x00\x00"} Inf
+test {unpack -Inf in float 32} {} {unpack_string "\xca\xff\x80\x00\x00"} -Inf
 test {unpack max finite 32} {} {unpack_string "\xca\x7f\x7f\xff\xff"} [expr {(2.0 - pow(2, -23.0)) * pow(2, 127.0)}]
 test {} {} {unpack_string "\xca\xff\x7f\xff\xff"} [expr {-(2.0 - pow(2, -23.0)) * pow(2, 127.0)}]
 test {unpack min pos 32} {} {unpack_string "\xca\x00\x00\x00\x01"} [expr {pow(2, (-126.0 - 23.0))}]
