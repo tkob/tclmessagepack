@@ -9,4 +9,10 @@ Other known implementations are:
 
 ## Status
 
-Incomplete
+### Unpack
+
+Implemented except for ext(8|16|32), fixext(1|2|4|8|16), map(16|32) and fixmap.
+
+### Pack
+
+Unimplemented.
