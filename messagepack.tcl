@@ -7,7 +7,7 @@ namespace eval messagepack {
         return "$prefix[incr id]"
     }
     
-    proc unpack_and_callback {read out {eofvar ""} {count -1}} {
+    proc unpack_and_callback {read out {ext cons_ext} {eofvar ""} {count -1}} {
         if {$count == 0} return
         while {[set byte [{*}$read 1]] != ""} {
             binary scan $byte {c} byte
@@ -122,7 +122,7 @@ namespace eval messagepack {
                 namespace eval $nsname {
                     variable array [list %lst]
                 }
-                unpack_and_callback $read [list lappend ${nsname}::array] $eofvar $len
+                unpack_and_callback $read [list lappend ${nsname}::array] $ext $eofvar $len
                 {*}$out [set ${nsname}::array]
                 namespace delete $nsname
             } elseif {$byte == -36} {
@@ -135,7 +135,7 @@ namespace eval messagepack {
                 namespace eval $nsname {
                     variable array [list %lst]
                 }
-                unpack_and_callback $read [list lappend ${nsname}::array] $eofvar $len
+                unpack_and_callback $read [list lappend ${nsname}::array] $ext $eofvar $len
                 {*}$out [set ${nsname}::array]
                 namespace delete $nsname
             } elseif {$byte == -35} {
@@ -148,7 +148,7 @@ namespace eval messagepack {
                 namespace eval $nsname {
                     variable array [list %lst]
                 }
-                unpack_and_callback $read [list lappend ${nsname}::array] $eofvar $len
+                unpack_and_callback $read [list lappend ${nsname}::array] $ext $eofvar $len
                 {*}$out [set ${nsname}::array]
                 namespace delete $nsname
             } elseif {$byte >= -128 && $byte <= -113} {
@@ -202,6 +202,10 @@ namespace eval messagepack {
         set len [string length $data]
         set cursor [expr {$cursor + $len}]
         return $data
+    }
+
+    proc cons_ext {type data} {
+        return [list %ext $type $data]
     }
 
     proc unpack_string {data} {
