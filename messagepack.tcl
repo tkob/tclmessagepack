@@ -162,19 +162,34 @@ namespace eval messagepack {
                 error {map 32 unimplemented}
             } elseif {$byte == -44} {
                 # 0xd4: fixext 1
-                error {fixext 1 unimplemented}
+                set type [{*}$read 1]
+                binary scan $type {c} type
+                set data [{*}$read 1]
+                {*}$out [{*}$ext $type $data]
             } elseif {$byte == -43} {
                 # 0xd5: fixext 2
-                error {fixext 2 unimplemented}
+                set type [{*}$read 1]
+                binary scan $type {c} type
+                set data [{*}$read 2]
+                {*}$out [{*}$ext $type $data]
             } elseif {$byte == -42} {
                 # 0xd6: fixext 4
-                error {fixext 4 unimplemented}
+                set type [{*}$read 1]
+                binary scan $type {c} type
+                set data [{*}$read 4]
+                {*}$out [{*}$ext $type $data]
             } elseif {$byte == -41} {
                 # 0xd7: fixext 8
-                error {fixext 8 unimplemented}
+                set type [{*}$read 1]
+                binary scan $type {c} type
+                set data [{*}$read 8]
+                {*}$out [{*}$ext $type $data]
             } elseif {$byte == -40} {
                 # 0xd8: fixext 16
-                error {fixext 16 unimplemented}
+                set type [{*}$read 1]
+                binary scan $type {c} type
+                set data [{*}$read 16]
+                {*}$out [{*}$ext $type $data]
             } elseif {$byte == -57} {
                 # 0xc7: ext 8
                 error {ext 8 unimplemented}

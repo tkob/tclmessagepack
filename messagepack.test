@@ -78,4 +78,16 @@ test {unpack 65535-elements array} {} {unpack_string "\xdc\xff\xff[string repeat
 test {unpack 65536-elements array} {} {unpack_string "\xdd\x00\x01\x00\x00[string repeat "\x00" 65536]"} [list [list %lst {*}[lrepeat 65536 0]]]
 test {unpack array of array} {} {unpack_string "\x92\x92\x01\x02\x92\x03\x04"} [list {%lst {%lst 1 2} {%lst 3 4}}]
 
+# fixext
+test {unpack fixext 1} {} {unpack_string "\xd4\x01\x00"} [list [list %ext 1 "\x00"]]
+test {unpack fixext 1 - negative tye} {} {unpack_string "\xd4\xff\x00"} [list [list %ext -1 "\x00"]]
+test {unpack fixext 2} {} {unpack_string "\xd5\x01\x00\x01"} [list [list %ext 1 "\x00\x01"]]
+test {unpack fixext 2 - negative tye} {} {unpack_string "\xd5\xff\x00\x01"} [list [list %ext -1 "\x00\x01"]]
+test {unpack fixext 4} {} {unpack_string "\xd6\x01\x00\x01\x02\x03"} [list [list %ext 1 "\x00\x01\x02\x03"]]
+test {unpack fixext 4 - negative tye} {} {unpack_string "\xd6\xff\x00\x01\x02\x03"} [list [list %ext -1 "\x00\x01\x02\x03"]]
+test {unpack fixext 8} {} {unpack_string "\xd7\x01\x00\x01\x02\x03\x04\x05\x06\x07"} [list [list %ext 1 "\x00\x01\x02\x03\x04\x05\x06\x07"]]
+test {unpack fixext 8 - negative tye} {} {unpack_string "\xd7\xff\x00\x01\x02\x03\x04\x05\x06\x07"} [list [list %ext -1 "\x00\x01\x02\x03\x04\x05\x06\x07"]]
+test {unpack fixext 16} {} {unpack_string "\xd8\x01\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f"} [list [list %ext 1 "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f"]]
+test {unpack fixext 16 - negative tye} {} {unpack_string "\xd8\xff\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f"} [list [list %ext -1 "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f"]]
+
 tcltest::cleanupTests
