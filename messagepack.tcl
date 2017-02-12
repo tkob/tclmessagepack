@@ -192,13 +192,31 @@ namespace eval messagepack {
                 {*}$out [{*}$ext $type $data]
             } elseif {$byte == -57} {
                 # 0xc7: ext 8
-                error {ext 8 unimplemented}
+                set len [{*}$read 1]
+                binary scan $len {c} len
+                set len [expr {$len & 0xff}]
+                set type [{*}$read 1]
+                binary scan $type {c} type
+                set data [{*}$read $len]
+                {*}$out [{*}$ext $type $data]
             } elseif {$byte == -56} {
                 # 0xc8: ext 16
-                error {ext 8 unimplemented}
+                set len [{*}$read 2]
+                binary scan $len {S} len
+                set len [expr {$len & 0xffff}]
+                set type [{*}$read 1]
+                binary scan $type {c} type
+                set data [{*}$read $len]
+                {*}$out [{*}$ext $type $data]
             } elseif {$byte == -55} {
                 # 0xc9: ext 32
-                error {ext 8 unimplemented}
+                set len [{*}$read 4]
+                binary scan $len {I} len
+                set len [expr {$len & 0xffffffff}]
+                set type [{*}$read 1]
+                binary scan $type {c} type
+                set data [{*}$read $len]
+                {*}$out [{*}$ext $type $data]
             } else {
                 error "unknown byte: $byte"
             }
