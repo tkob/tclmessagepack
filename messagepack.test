@@ -79,9 +79,9 @@ test {unpack 65536-elements array} {} {unpack_string "\xdd\x00\x01\x00\x00[strin
 test {unpack array of array} {} {unpack_string "\x92\x92\x01\x02\x92\x03\x04"} [list {%lst {%lst 1 2} {%lst 3 4}}]
 
 # fixmap
-test {unpack empty map} {} {unpack_string "\x80"} [list [list %map [list]]]
-test {unpack 1-pair map} {} {unpack_string "\x81\x01\x02"} [list [list %map [list 1 2]]]
-test {unpack 15-pairs map} {} {unpack_string "\x8f\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x01"} [list [list %map [list 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 2 3 4 5 6 7 8 9 10 11 12 13 14 15 1]]]
+test {unpack empty map} {} {unpack_string "\x80"} [list [list %map [dict create]]]
+test {unpack 1-pair map} {} {unpack_string "\x81\x01\x02"} [list [list %map [dict create 1 2]]]
+test {unpack 15-pairs map} {} {unpack_string "\x8f\x01\xff\x02\xfe\x03\xfd\x04\xfc\x05\xfb\x06\xfa\x07\xf9\x08\xf8\x09\xf7\x0a\xf6\x0b\xf5\x0c\xf4\x0d\xf3\x0e\xf2\x0f\xf1"} [list [list %map [dict create 1 -1 2 -2 3 -3 4 -4 5 -5 6 -6 7 -7 8 -8 9 -9 10 -10 11 -11 12 -12 13 -13 14 -14 15 -15]]]
 
 # fixext
 test {unpack fixext 1} {} {unpack_string "\xd4\x01\x00"} [list [list %ext 1 "\x00"]]
