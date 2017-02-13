@@ -1,0 +1,2 @@
+check:
+	tclsh messagepack.test
