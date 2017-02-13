@@ -152,8 +152,16 @@ namespace eval messagepack {
                 {*}$out [set ${nsname}::array]
                 namespace delete $nsname
             } elseif {$byte >= -128 && $byte <= -113} {
-                # fixmap
-                error {fixmap unimplemented}
+                # 1000XXXX: fixmap
+                set len [expr {($byte & 0x0f) * 2}]
+
+                set nsname [gensym ns]
+                namespace eval $nsname {
+                    variable dict [list]
+                }
+                unpack_and_callback $read [list lappend ${nsname}::dict] $ext $eofvar $len
+                {*}$out [list %map [set ${nsname}::dict]]
+                namespace delete $nsname
             } elseif {$byte == -34} {
                 # 0xde: map 16
                 error {map 16 unimplemented}
