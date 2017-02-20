@@ -11,7 +11,7 @@ Other known implementations are:
 
 ### Unpack
 
-Implemented except for map(16|32) and fixmap.
+Implemented.
 
 ### Pack
 
