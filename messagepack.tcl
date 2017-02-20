@@ -164,10 +164,30 @@ namespace eval messagepack {
                 namespace delete $nsname
             } elseif {$byte == -34} {
                 # 0xde: map 16
-                error {map 16 unimplemented}
+                set len [{*}$read 2]
+                binary scan $len {S} len
+                set len [expr {($len & 0xffff) * 2}]
+
+                set nsname [gensym ns]
+                namespace eval $nsname {
+                    variable dict [list]
+                }
+                unpack_and_callback $read [list lappend ${nsname}::dict] $ext $eofvar $len
+                {*}$out [list %map [set ${nsname}::dict]]
+                namespace delete $nsname
             } elseif {$byte == -33} {
                 # 0xdf: map 32
-                error {map 32 unimplemented}
+                set len [{*}$read 4]
+                binary scan $len {I} len
+                set len [expr {($len & 0xffffffff) * 2}]
+
+                set nsname [gensym ns]
+                namespace eval $nsname {
+                    variable dict [list]
+                }
+                unpack_and_callback $read [list lappend ${nsname}::dict] $ext $eofvar $len
+                {*}$out [list %map [set ${nsname}::dict]]
+                namespace delete $nsname
             } elseif {$byte == -44} {
                 # 0xd4: fixext 1
                 set type [{*}$read 1]
