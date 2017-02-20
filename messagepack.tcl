@@ -283,5 +283,28 @@ namespace eval messagepack {
         return $result
     }
 
-    namespace export unpack_and_callback unpack_string
+    proc unpack_chan {channelId} {
+        set nsname [gensym ns]
+        namespace eval $nsname {
+            variable sink [list]
+        }
+
+        unpack_and_callback [list chan read $channelId] [list lappend ${nsname}::sink]
+
+        set result [set ${nsname}::sink]
+        namespace delete $nsname
+        return $result
+    }
+
+    proc unpack_file {fileName} {
+        set f [open $fileName]
+        try {
+            fconfigure $f -translation binary
+            return [unpack_chan $f]
+        } finally {
+            close $f
+        }
+    }
+
+    namespace export unpack_*
 }
