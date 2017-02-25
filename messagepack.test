@@ -5,6 +5,7 @@ package require messagepack
 
 namespace import tcltest::test
 namespace import messagepack::unpack_string
+namespace import messagepack::unpack_file
 
 tcltest::configure {*}$argv
 
@@ -83,10 +84,6 @@ test {unpack empty map} {} {unpack_string "\x80"} [list [list %map [dict create]
 test {unpack 1-pair map} {} {unpack_string "\x81\x01\x02"} [list [list %map [dict create 1 2]]]
 test {unpack 15-pairs map} {} {unpack_string "\x8f\x01\xff\x02\xfe\x03\xfd\x04\xfc\x05\xfb\x06\xfa\x07\xf9\x08\xf8\x09\xf7\x0a\xf6\x0b\xf5\x0c\xf4\x0d\xf3\x0e\xf2\x0f\xf1"} [list [list %map [dict create 1 -1 2 -2 3 -3 4 -4 5 -5 6 -6 7 -7 8 -8 9 -9 10 -10 11 -11 12 -12 13 -13 14 -14 15 -15]]]
 
-# map
-test {unpack 15-pairs map 16} {} {unpack_string "\xde\x00\x0f\x01\xff\x02\xfe\x03\xfd\x04\xfc\x05\xfb\x06\xfa\x07\xf9\x08\xf8\x09\xf7\x0a\xf6\x0b\xf5\x0c\xf4\x0d\xf3\x0e\xf2\x0f\xf1"} [list [list %map [dict create 1 -1 2 -2 3 -3 4 -4 5 -5 6 -6 7 -7 8 -8 9 -9 10 -10 11 -11 12 -12 13 -13 14 -14 15 -15]]]
-test {unpack 15-pairs map 32} {} {unpack_string "\xdf\x00\x00\x00\x0f\x01\xff\x02\xfe\x03\xfd\x04\xfc\x05\xfb\x06\xfa\x07\xf9\x08\xf8\x09\xf7\x0a\xf6\x0b\xf5\x0c\xf4\x0d\xf3\x0e\xf2\x0f\xf1"} [list [list %map [dict create 1 -1 2 -2 3 -3 4 -4 5 -5 6 -6 7 -7 8 -8 9 -9 10 -10 11 -11 12 -12 13 -13 14 -14 15 -15]]]
-
 # fixext
 test {unpack fixext 1} {} {unpack_string "\xd4\x01\x00"} [list [list %ext 1 "\x00"]]
 test {unpack fixext 1 - negative tye} {} {unpack_string "\xd4\xff\x00"} [list [list %ext -1 "\x00"]]
@@ -104,5 +101,30 @@ test {unpack ext 8} {} {unpack_string "\xc7\x11\x01\x00\x01\x02\x03\x04\x05\x06\
 test {unpack ext 8 - negative tye} {} {unpack_string "\xc7\x11\xff\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10"} [list [list %ext -1 "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10"]]
 test {unpack 65535-bytes ext 16} {} {unpack_string "\xc8\xff\xff\x01[string repeat "\xe7\xbe\x8a" 21845]"} [list [list %ext 1 [string repeat "\xe7\xbe\x8a" 21845]]]
 test {unpack 65536-bytes ext 32} {} {unpack_string "\xc9\x00\x01\x00\x00\x01_[string repeat "\xe7\xbe\x8a" 21845]"} [list [list %ext 1 "_[string repeat "\xe7\xbe\x8a" 21845]"]]
+
+# unpack_file
+
+test {unpack nil} {} {unpack_file t/fixture/nil} %nil
+test {unpack false} {} {unpack_file t/fixture/false} false
+test {unpack true} {} {unpack_file t/fixture/true} true
+
+test {unpack min positive fixnum} {} {unpack_file t/fixture/0} 0
+test {unpack max positive fixnum} {} {unpack_file t/fixture/127} 127
+test {unpack uint 8} {} {unpack_file t/fixture/128} 128
+test {unpack max uint 8} {} {unpack_file t/fixture/255} 255
+test {unpack uint 16} {} {unpack_file t/fixture/256} 256
+test {unpack max uint 16} {} {unpack_file t/fixture/65535} 65535
+test {unpack uint 32} {} {unpack_file t/fixture/65536} 65536
+test {unpack max uint 32} {} {unpack_file t/fixture/4294967295} 4294967295
+test {unpack uint 64} {} {unpack_file t/fixture/4294967296} 4294967296
+test {unpack max uint 64} {} {unpack_file t/fixture/18446744073709551615} 18446744073709551615
+
+set large_map [list]
+for {set i 0} {$i < 65535} {incr i} {
+    lappend large_map $i $i
+}
+test {unpack 65535-pairs map} {} {unpack_file t/fixture/map65535} [list [list %map $large_map]]
+lappend large_map 65535 65535
+test {unpack 65536-pairs map} {} {unpack_file t/fixture/map65536} [list [list %map $large_map]]
 
 tcltest::cleanupTests
